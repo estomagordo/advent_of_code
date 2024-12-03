@@ -51,9 +51,9 @@ def solve_a(lines):
 
 def solve_b(lines):
     val = 0
+    do = True
 
     for line in lines:
-        do = True
         muls = ''
         a = ''
         b = ''
@@ -102,5 +102,3 @@ def main():
 
 if __name__ == '__main__':
     print(main())
-
-# 77877805 too high
