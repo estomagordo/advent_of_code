@@ -218,3 +218,15 @@ def solve_system(equations):
         return False, [-1 for _ in range(w-1)]
 
     return True, [[equation for equation in equations if equation[j] == Fraction(1)][0][-1] for j in range(w-1)]
+
+
+def forward_rays_with_diagonals(grid, y, x):
+    height = len(grid)
+    width = len(grid[0])
+    
+    return [
+     [grid[y][x+d] for d in range(width-x)],
+     [grid[y+d][x] for d in range(height-y)],
+     [grid[y+d][x+d] for d in range(min(height-y, width-x))],
+     [grid[y+d][x-d] for d in range(min(height-y, x+1))],
+    ]

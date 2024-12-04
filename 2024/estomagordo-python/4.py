@@ -1,7 +1,4 @@
-from os import path
-from sys import argv
-
-program_file = lambda day: f"""from bisect import bisect_left, bisect_right
+from bisect import bisect_left, bisect_right
 from collections import Counter, defaultdict, deque
 from functools import cache, reduce
 from heapq import heapify, heappop, heappush
@@ -14,25 +11,47 @@ from helpers import adjacent, between, chunks, chunks_with_overlap, columns, dig
 
 
 def parse(lines):
-    return None
+    return [list(line.rstrip()) for line in lines]
     
 
 def solve_a(lines):
-    data = parse(lines)
+    grid = parse(lines)
+    height = len(grid)
+    width = len(grid[0])
 
-    return None
+    def find(y, x, target):
+        reversed = ''.join(target[::-1])
+        n = len(target)
+
+        def test(word):
+            return word in (target, reversed)
+
+        return sum(test(''.join(ray[:n])) for ray in forward_rays_with_diagonals(grid, y, x))
+
+    return sum(find(y, x, 'XMAS') for y, x in product(range(height), range(width)))
 
 
 def solve_b(lines):
-    data = parse(lines)
+    grid = parse(lines)
+    height = len(grid)
+    width = len(grid[0])
+    count = 0
 
-    return None
+    for y in range(height-2):
+        for x in range(width-2):
+            if grid[y+1][x+1] != 'A':
+                continue
+
+            if {grid[y][x], grid[y+2][x+2]} == set('MS') and {grid[y][x+2], grid[y+2][x]} == set('MS'):
+                count += 1
+
+    return count
 
 
 def main():
     lines = []
 
-    with open('{day}.txt') as f:
+    with open('4.txt') as f:
         for line in f.readlines():
             lines.append(line)
             
@@ -41,17 +60,3 @@ def main():
 
 if __name__ == '__main__':
     print(main())
-"""
-
-if __name__ == '__main__':
-    day = argv[1]
-    
-    program = f'{day}.py'
-    inp = f'{day}.txt'
-
-    if not path.isfile(program):
-        with open(program, 'w') as g:
-            g.write(program_file(day))
-    if not path.isfile(inp):
-        with open(inp, 'w') as g:
-            g.write('')
