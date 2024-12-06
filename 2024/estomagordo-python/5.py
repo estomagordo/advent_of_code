@@ -46,7 +46,33 @@ def solve_a(lines):
 
 def solve_b(lines):
     orderings, updates = parse(lines)
+    mappings = {k: k for k in orderings.keys()}
+
+    for v in orderings.values():
+        for val in v:
+            if val not in mappings:
+                mappings[val] = val
+    
+    needs_enlarging = True
+    while needs_enlarging:
+        needs_enlarging = False
+
+        for num, following in orderings.items():
+            if needs_enlarging:
+                break
+            
+            largest = max(mappings[f] for f in following)
+
+            while mappings[num] < largest:
+                needs_enlarging = True
+                mappings[num] *= num
+                break
+
     points = 0
+
+    for update in updates:
+        if len([u for u in update if u in mappings]) % 2 == 0:
+            print('wut')
 
     def score(update):
         for i, num in enumerate(update):
