@@ -46,33 +46,8 @@ def solve_a(lines):
 
 def solve_b(lines):
     orderings, updates = parse(lines)
-    mappings = {k: k for k in orderings.keys()}
-
-    for v in orderings.values():
-        for val in v:
-            if val not in mappings:
-                mappings[val] = val
-    
-    needs_enlarging = True
-    while needs_enlarging:
-        needs_enlarging = False
-
-        for num, following in orderings.items():
-            if needs_enlarging:
-                break
-            
-            largest = max(mappings[f] for f in following)
-
-            while mappings[num] < largest:
-                needs_enlarging = True
-                mappings[num] *= num
-                break
 
     points = 0
-
-    for update in updates:
-        if len([u for u in update if u in mappings]) % 2 == 0:
-            print('wut')
 
     def score(update):
         for i, num in enumerate(update):
@@ -89,31 +64,61 @@ def solve_b(lines):
         if score(update) > 0:
             continue
 
-        origupdate = list(update)
-        done = False
+        mappings = {val: val for val in update}
 
-        while not done:
-            done = False
+        needs_enlarging = True
+        while needs_enlarging:
+            needs_enlarging = False
 
-            for i, num in enumerate(update):
-                if num not in orderings:
+            for num, following in orderings.items():
+                if num not in mappings:
                     continue
 
-                ordered = True
-                
-                for j in range(i):
-                    if update[j] in orderings[num]:
-                        update[i], update[j] = update[j], update[i]
-                        ordered = False
-                        break
+                if needs_enlarging:
+                    break
 
-            if ordered:
-                print(origupdate, update, update[len(update)//2])
-                points += update[len(update)//2]
-                done = True
-                break
+                values = [mappings[f] for f in following if f in mappings]
+
+                if not values:
+                    continue
+
+                largest = max(values)
+
+                while mappings[num] < largest:
+                    needs_enlarging = True
+                    mappings[num] *= num
+                    break
+
+        update.sort(key=lambda v: mappings[v])
+        points += update[len(update)//2]
 
     return points
+
+    #     origupdate = list(update)
+    #     done = False
+
+    #     while not done:
+    #         done = False
+
+    #         for i, num in enumerate(update):
+    #             if num not in orderings:
+    #                 continue
+
+    #             ordered = True
+                
+    #             for j in range(i):
+    #                 if update[j] in orderings[num]:
+    #                     update[i], update[j] = update[j], update[i]
+    #                     ordered = False
+    #                     break
+
+    #         if ordered:
+    #             print(origupdate, update, update[len(update)//2])
+    #             points += update[len(update)//2]
+    #             done = True
+    #             break
+
+    # return points
 
 
 def main():
