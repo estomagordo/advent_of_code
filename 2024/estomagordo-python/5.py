@@ -94,32 +94,6 @@ def solve_b(lines):
 
     return points
 
-    #     origupdate = list(update)
-    #     done = False
-
-    #     while not done:
-    #         done = False
-
-    #         for i, num in enumerate(update):
-    #             if num not in orderings:
-    #                 continue
-
-    #             ordered = True
-                
-    #             for j in range(i):
-    #                 if update[j] in orderings[num]:
-    #                     update[i], update[j] = update[j], update[i]
-    #                     ordered = False
-    #                     break
-
-    #         if ordered:
-    #             print(origupdate, update, update[len(update)//2])
-    #             points += update[len(update)//2]
-    #             done = True
-    #             break
-
-    # return points
-
 
 def main():
     lines = []
@@ -133,6 +107,3 @@ def main():
 
 if __name__ == '__main__':
     print(main())
-
-# 6382 too high
-# 6095 too low
