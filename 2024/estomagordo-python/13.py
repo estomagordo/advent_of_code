@@ -28,7 +28,7 @@ def solve_a(lines):
     bcost = 1
     machines = parse(lines)
 
-    def solve(machine, max_repeats=100):
+    def solve(machine):
         a, b, prize = machine
         limit = 100
         costseen = {(0, 0): 0}
@@ -40,7 +40,6 @@ def solve_a(lines):
             cost, amoves, bmoves, y, x = heappop(frontier)
 
             if (y, x) == prize:
-                print(a, b, amoves, bmoves, prize, cost)
                 return cost
             
             if amoves == limit:
@@ -75,9 +74,45 @@ def solve_a(lines):
 
 
 def solve_b(lines):
-    data = parse(lines)
+    acost = 3
+    bcost = 1
+    added = 10000000000000
+    machines = parse(lines)
 
-    return None
+    def solve(machine):
+        a, b, prize = machine
+        ay, ax = a
+        by, bx = b
+        my, mx = prize
+        my += added
+        mx += added
+
+        bcount = min(my//by, mx//bx)
+        y = bcount*by
+        x = bcount*bx
+
+        aydiff = y%ay
+        axdiff = x%ax
+        seen = {(aydiff, axdiff)}
+
+        while True:
+            if aydiff == 0 and axdiff == 0:
+                acount = (my-bcount*by)//ay
+                
+                return acount*acost + bcount*bcost
+            
+            y -= by
+            x -= bx
+
+            aydiff = y%ay
+            axdiff = x%ax
+
+            if (aydiff, axdiff) in seen:
+                return 0
+            
+            seen.add((aydiff, axdiff))
+
+    return sum(solve(machine) for machine in machines)
 
 
 def main():
@@ -92,3 +127,5 @@ def main():
 
 if __name__ == '__main__':
     print(main())
+
+# 104973831687336 too high
