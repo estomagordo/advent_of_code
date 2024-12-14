@@ -7,7 +7,7 @@ from math import ceil, comb, factorial, gcd, isclose, lcm
 
 from algo import a_star, custsort, merge_ranges, sssp
 from constants import EPSILON, HUGE, UNHUGE
-from helpers import adjacent, between, chunks, chunks_with_overlap, columns, digits, dimensions, distance, distance_sq, eight_neighs, eight_neighs_bounded, forward_rays_with_diagonals, grouped_lines, ints, manhattan, multall, n_neighs, neighs, neighs_bounded, overlap, positives, rays, rays_from_inside, words
+from helpers import adjacent, between, chunks, chunks_with_overlap, columns, digits, dimensions, distance, distance_sq, eight_neighs, eight_neighs_bounded, forward_rays_with_diagonals, grouped_lines, ints, manhattan, multall, n_neighs, neighs, neighs_bounded, overlap, positives, rays, rays_from_inside, solve_system, words
 
 
 def parse(lines):
@@ -83,34 +83,16 @@ def solve_b(lines):
         a, b, prize = machine
         ay, ax = a
         by, bx = b
-        my, mx = prize
-        my += added
-        mx += added
+        y, x = prize
+        y += added
+        x += added
 
-        bcount = min(my//by, mx//bx)
-        y = bcount*by
-        x = bcount*bx
+        solution = solve_system([[ay, by, y], [ax, bx, x]])
 
-        aydiff = y%ay
-        axdiff = x%ax
-        seen = {(aydiff, axdiff)}
-
-        while True:
-            if aydiff == 0 and axdiff == 0:
-                acount = (my-bcount*by)//ay
-                
-                return acount*acost + bcount*bcost
-            
-            y -= by
-            x -= bx
-
-            aydiff = y%ay
-            axdiff = x%ax
-
-            if (aydiff, axdiff) in seen:
-                return 0
-            
-            seen.add((aydiff, axdiff))
+        if not solution[0] or solution[1][0].denominator > 1 or solution[1][1].denominator > 1:
+            return 0
+        
+        return solution[1][0].numerator * acost + solution[1][1].numerator * bcost
 
     return sum(solve(machine) for machine in machines)
 
@@ -127,5 +109,3 @@ def main():
 
 if __name__ == '__main__':
     print(main())
-
-# 104973831687336 too high
