@@ -113,7 +113,8 @@ def solve_b(lines):
                     elif grid[nexty][nextx] in '[]':
                         frontier.append((nexty, nextx))
                         if dx != 0:
-                            frontier.append((nexty, nextx+dx))
+                            if grid[nexty][nextx+dx] in '[]':
+                                frontier.append((nexty, nextx+dx))
                         else:
                             if grid[nexty][nextx] == '[':
                                 frontier.append((nexty, nextx+1))
@@ -122,13 +123,20 @@ def solve_b(lines):
 
                 if blocked:
                     continue
-
-                for fy, fx in frontier[::-1]:
-                    grid[fy+dy][fx+dx] = grid[fy][fx]
+                
+                newgrid = [list(row) for row in grid]
+                for fy, fx in frontier:
+                    newgrid[fy+dy][fx+dx] = grid[fy][fx]
+                    if (fy-dy, fx-dx) not in frontier:
+                        newgrid[fy][fx] = '.'
+                
+                grid = newgrid
 
                 y += dy
                 x += dx
 
+    for row in grid:
+        print(''.join(row))
     return sum(100 * y + x for y, x in product(range(height), range(width)) if grid[y][x] == '[')
 
 
@@ -144,5 +152,3 @@ def main():
 
 if __name__ == '__main__':
     print(main())
-
-# 1512803 too high
