@@ -230,3 +230,12 @@ def forward_rays_with_diagonals(grid, y, x):
      [grid[y+d][x+d] for d in range(min(height-y, width-x))],
      [grid[y+d][x-d] for d in range(min(height-y, x+1))],
     ]
+
+
+def find_in_grid(grid, symbol):
+    for y, row in enumerate(grid):
+        for x, c in enumerate(row):
+            if c == symbol:
+                return y, x
+            
+    return -1, -1
