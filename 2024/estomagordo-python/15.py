@@ -57,9 +57,79 @@ def solve_a(lines):
 
 
 def solve_b(lines):
-    data = parse(lines)
+    base_grid, instructions = parse(lines)
 
-    return None
+    grid = []
+
+    for row in base_grid:
+        rrow = []
+
+        for c in row:
+            rrow.append(c)
+            rrow.append(c)
+
+            if c == '@':
+                rrow[-1] = '.'
+            if c == 'O':
+                rrow[-2] = '['
+                rrow[-1] = ']'
+
+        grid.append(rrow)
+
+    height, width = dimensions(grid)
+
+    y, x = find_in_grid(grid, '@')
+    grid[y][x] = '.'
+
+    for instruction in instructions:
+        dy, dx = DIRECTIONS[instruction]
+
+        next_cell = grid[y+dy][x+dx]
+
+        match next_cell:
+            case '#':
+                continue
+            case '.':
+                y += dy
+                x += dx
+            case _:
+                frontier = [(y+dy, x+dx)]
+                
+                if dy != 0:
+                    if next_cell == '[':
+                        frontier.append((y+dy, x+dx+1))
+                    else:
+                        frontier.append((y+dy, x+dx-1))
+                
+                blocked = False
+
+                for fy, fx in frontier:
+                    nexty = fy+dy
+                    nextx = fx+dx
+
+                    if grid[nexty][nextx] == '#':
+                        blocked = True
+                        break
+                    elif grid[nexty][nextx] in '[]':
+                        frontier.append((nexty, nextx))
+                        if dx != 0:
+                            frontier.append((nexty, nextx+dx))
+                        else:
+                            if grid[nexty][nextx] == '[':
+                                frontier.append((nexty, nextx+1))
+                            else:
+                                frontier.append((nexty, nextx-1))
+
+                if blocked:
+                    continue
+
+                for fy, fx in frontier[::-1]:
+                    grid[fy+dy][fx+dx] = grid[fy][fx]
+
+                y += dy
+                x += dx
+
+    return sum(100 * y + x for y, x in product(range(height), range(width)) if grid[y][x] == '[')
 
 
 def main():
@@ -74,3 +144,5 @@ def main():
 
 if __name__ == '__main__':
     print(main())
+
+# 1512803 too high
