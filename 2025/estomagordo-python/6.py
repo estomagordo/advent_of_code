@@ -4,11 +4,14 @@ from functools import cache, reduce
 from heapq import heapify, heappop, heappush
 from itertools import combinations, permutations, product
 from math import ceil, comb, factorial, gcd, isclose, lcm
+from operator import add, mul
 
 from algo import a_star, custsort, merge_ranges, sssp
 from constants import DIRECTIONS, EPSILON, HUGE, UNHUGE
 from helpers import adjacent, between, chunks, chunks_with_overlap, columns, digits, dimensions, distance, distance_sq, eight_neighs, eight_neighs_bounded, find_in_grid, forward_rays_with_diagonals, grouped_lines, ints, manhattan, multall, n_neighs, neighs, neighs_bounded, overlap, positives, rays, rays_from_inside, solve_system, words
 
+
+OPERATORS = {'+': add, '*': mul}
 
 def parse(lines):
     grid = []
@@ -30,7 +33,7 @@ def parse_b(lines):
     for colindex in range(len(starts)):
         stopx = starts[colindex+1] if colindex < len(starts) - 1 else widest
         startx = starts[colindex]
-        operator = lines[-1][startx]
+        operator = OPERATORS[lines[-1][startx]]
         col = []
 
         for x in range(stopx-1, startx-1, -1):
@@ -73,21 +76,7 @@ def solve_a(lines):
 def solve_b(lines):
     cols = parse_b(lines)
 
-    total = 0
-
-    for col in cols:
-        if col[-1] == '*':
-            val = 1
-            for num in col[:-1]:
-                val *= num
-            total += val
-        else:
-            val = 0
-            for num in col[:-1]:
-                val += num
-            total += val
-
-    return total
+    return sum(reduce(col[-1], col[:-1]) for col in cols)
 
 
 def main():
