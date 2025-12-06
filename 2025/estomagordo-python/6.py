@@ -102,5 +102,3 @@ def main():
 
 if __name__ == '__main__':
     print(main())
-
-# 10266453446867 too high
