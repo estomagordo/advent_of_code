@@ -14,15 +14,9 @@ from helpers import adjacent, between, chunks, chunks_with_overlap, columns, dig
 OPERATORS = {'+': add, '*': mul}
 
 def parse(lines):
-    grid = []
-
-    for line in lines:
-        if line.strip()[0].isdigit():
-            grid.append(list(map(int, line.split())))
-        else:
-             grid.append(line.split())
-
-    return grid
+    raw_grid = [list(map(int, line.split())) for line in lines[:-1]]
+    
+    return [[raw_grid[y][x] for y in range(len(raw_grid))] + [OPERATORS[lines[-1].split()[x]]] for x in range(len(raw_grid[0]))]
 
 
 def parse_b(lines):
@@ -53,24 +47,9 @@ def parse_b(lines):
     
 
 def solve_a(lines):
-    grid = parse(lines)
-    h,w = dimensions(grid)
+    cols = parse(lines)
 
-    total = 0
-
-    for col in range(w):
-        if grid[-1][col] == '*':
-            val = 1
-            for y in range(h-1):
-                val *= grid[y][col]
-            total += val
-        else:
-            val = 0
-            for y in range(h-1):
-                val += grid[y][col]
-            total += val
-
-    return total
+    return sum(reduce(col[-1], col[:-1]) for col in cols)
 
 
 def solve_b(lines):
